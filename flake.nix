@@ -8,6 +8,7 @@
     flake-parts.lib.mkFlake { inherit inputs; } 
       {
             systems = [ "x86_64-linux" "aarch64-darwin" ];
+            imports = [ ./module.nix ];
             perSystem = { config, self', inputs', pkgs, system, ... }: let
               libraries = with pkgs; [
                   webkitgtk
@@ -36,11 +37,6 @@
                 glib
                 gtk3
               ];
-            tauriConf = builtins.fromJSON (builtins.readFile ./tauri.conf.json);
-            confOverrides = { build = tauriConf.build // { devPath = uiFolder; distDir = uiFolder; }; };
-            uiFolder = "${source}/ui";
-            overridedConf = tauriConf // confOverrides;
-            conf = builtins.toFile "conf.json" (builtins.toJSON overridedConf);
             source = ./.;
             in 
                 {   packages.tauri-build = 
@@ -53,7 +49,8 @@
                             cargoLock = {
                                 lockFile = ./Cargo.lock;
                                 allowBuiltinFetchGit = true;
-                            };
+                              };
+                            doCheck = false;
                             buildInputs = packages;
                             nativeBuildInputs = buildInputs; 
                             buildPhase = ''

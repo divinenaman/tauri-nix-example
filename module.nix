@@ -23,12 +23,13 @@
           webkitgtk
           librsvg
           cargo
+          cargo-tauri
           rustc
         ];
   in
   {
     devShells.tauri-dev = pkgs.mkShell {
-          buildInputs = packages;
+          nativeBuildInputs = packages;
           shellHook =
             ''
               export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath libraries}:$LD_LIBRARY_PATH
